@@ -1,0 +1,6 @@
+# Benchmark question IDs that must pass on every release (zero tolerance).
+# Agreed with the agent owner. IDs come from benchmarks.questions[].id in src/genie/*.geniespace.json.
+40000000000000000000000000000001  # What is total FUA at the latest month end?
+40000000000000000000000000000003  # What was FUA at 30 June 2026?
+40000000000000000000000000000012  # What were net flows in FY2026?
+40000000000000000000000000000018  # What was total fee revenue in FY2026?

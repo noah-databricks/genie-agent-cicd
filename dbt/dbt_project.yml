@@ -1,0 +1,38 @@
+name: portfolio_reporting
+version: "1.0.0"
+config-version: 2
+profile: portfolio_reporting
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+
+vars:
+  # Overridden per bundle target through the dbt job (--vars). Defaults are for local runs.
+  gold_schema: dev_portfolio_gold
+  genie_schema: dev_portfolio_genie
+  agent_users_group: account users
+
+# Agent users get the agent schema only. Gold stays private; views and metric views
+# read gold with the owner's rights, so users never need SELECT on gold.
+on-run-end:
+  - "GRANT USE SCHEMA, SELECT ON SCHEMA {{ target.catalog }}.{{ var('genie_schema') }} TO `{{ var('agent_users_group') }}`"
+
+models:
+  portfolio_reporting:
+    +persist_docs:
+      relation: true
+      columns: true
+    synthetic:
+      # Stand-in for the platform's real gold sources. Not part of the pattern; replace with real gold models.
+      +schema: "{{ var('gold_schema') }}"
+      +materialized: table
+      +tags: ["synthetic"]
+    gold:
+      +schema: "{{ var('gold_schema') }}"
+      +materialized: table
+    genie:
+      # One agent, one schema: only the objects the Portfolio Reporting agent reads.
+      +schema: "{{ var('genie_schema') }}"
+      +persist_docs:
+        relation: false
+        columns: false

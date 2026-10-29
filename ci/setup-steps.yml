@@ -1,0 +1,7 @@
+steps:
+  - task: UsePythonVersion@0
+    inputs: {versionSpec: "3.12"}
+  - script: |
+      curl -fsSL https://raw.githubusercontent.com/databricks/setup-cli/main/install.sh | sh
+      pip install -r requirements-ci.txt
+    displayName: Install Databricks CLI, dbt and SDK

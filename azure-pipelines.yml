@@ -1,0 +1,57 @@
+# Azure DevOps equivalent of .github/workflows. PRs deploy to test and run the gates;
+# a v* tag promotes to prod behind the `genie-production` environment approval.
+trigger:
+  tags:
+    include: ["v*"]
+pr:
+  branches:
+    include: [main]
+
+variables:
+  - group: databricks-genie-deployer   # DATABRICKS_HOST, DATABRICKS_CLIENT_ID, DATABRICKS_CLIENT_SECRET (secret)
+
+stages:
+  - stage: Test
+    condition: eq(variables['Build.Reason'], 'PullRequest')
+    jobs:
+      - deployment: test
+        environment: genie-test
+        pool: {vmImage: ubuntu-latest}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: ci/setup-steps.yml
+                - script: python scripts/run_dbt.py --target test
+                  displayName: Build data objects (dbt)
+                  env: {DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)}
+                - script: |
+                    python scripts/prebuild.py --target test
+                    python scripts/prebuild.py --verify test
+                    databricks bundle deploy -t test
+                    python scripts/check_agent_sql.py --target test
+                    python scripts/benchmark_gate.py --target test --min-accuracy 0.9 --critical-file benchmarks/critical.txt
+                  displayName: Deploy to test and gate
+                  env: {DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)}
+
+  - stage: Prod
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/v')
+    jobs:
+      - deployment: prod
+        environment: genie-production   # approval check = agent owner
+        pool: {vmImage: ubuntu-latest}
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - template: ci/setup-steps.yml
+                - script: |
+                    python scripts/run_dbt.py --target prod
+                    python scripts/prebuild.py --target prod
+                    python scripts/prebuild.py --verify prod
+                    databricks bundle deploy -t prod
+                    python scripts/check_agent_sql.py --target prod
+                  displayName: Deploy to prod
+                  env: {DATABRICKS_CLIENT_SECRET: $(DATABRICKS_CLIENT_SECRET)}

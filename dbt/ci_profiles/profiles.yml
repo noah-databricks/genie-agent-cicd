@@ -1,0 +1,24 @@
+# Profile for running dbt from a laptop or CI runner (scripts/run_dbt.py sets the env vars
+# from the bundle target). The bundle's dbt job doesn't use this file: the Databricks dbt
+# task generates its own profile from the task's warehouse, catalog and schema.
+portfolio_reporting:
+  target: "{{ env_var('DBT_AUTH', 'token') }}"
+  outputs:
+    token:   # local: DATABRICKS_TOKEN from `databricks auth token`
+      type: databricks
+      host: "{{ env_var('DATABRICKS_HOST') | replace('https://', '') }}"
+      http_path: "/sql/1.0/warehouses/{{ env_var('DBT_WAREHOUSE_ID') }}"
+      catalog: "{{ env_var('DBT_CATALOG') }}"
+      schema: "{{ env_var('DBT_GOLD_SCHEMA') }}"
+      token: "{{ env_var('DATABRICKS_TOKEN') }}"
+      threads: 4
+    oauth_m2m:   # CI: the deployment service principal
+      type: databricks
+      host: "{{ env_var('DATABRICKS_HOST') | replace('https://', '') }}"
+      http_path: "/sql/1.0/warehouses/{{ env_var('DBT_WAREHOUSE_ID') }}"
+      catalog: "{{ env_var('DBT_CATALOG') }}"
+      schema: "{{ env_var('DBT_GOLD_SCHEMA') }}"
+      auth_type: oauth
+      client_id: "{{ env_var('DATABRICKS_CLIENT_ID') }}"
+      client_secret: "{{ env_var('DATABRICKS_CLIENT_SECRET') }}"
+      threads: 4

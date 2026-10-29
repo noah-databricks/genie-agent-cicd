@@ -1,0 +1,23 @@
+resources:
+  jobs:
+    portfolio_dbt:
+      name: portfolio_reporting_dbt
+      description: Builds gold tables and the agent's metric views with dbt (dbt-databricks metric_view materialisation).
+      tasks:
+        - task_key: dbt_build
+          environment_key: dbt
+          dbt_task:
+            project_directory: ../dbt
+            warehouse_id: ${var.warehouse_id}
+            catalog: ${var.catalog}
+            schema: ${var.gold_schema}
+            commands:
+              - 'dbt build --vars "{gold_schema: ${var.gold_schema}, genie_schema: ${var.genie_schema}, agent_users_group: ${var.agent_users_group}}"'
+      environments:
+        - environment_key: dbt
+          spec:
+            environment_version: "4"
+            dependencies:
+              - dbt-databricks>=1.12,<2.0
+      queue:
+        enabled: true

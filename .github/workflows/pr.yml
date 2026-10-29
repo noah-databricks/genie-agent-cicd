@@ -1,0 +1,60 @@
+# Pull request: validate every target, deploy to test, then gate on SQL checks and benchmarks.
+name: genie-agent-pr
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency: genie-test   # one deploy to the shared test agent at a time
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    env:
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+      DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: databricks/setup-cli@main
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements-ci.txt
+      - name: Render and validate each target
+        run: |
+          for t in test prod; do
+            python scripts/prebuild.py --target "$t"
+            python scripts/prebuild.py --verify "$t"
+            databricks bundle validate -t "$t"
+          done
+      - name: dbt parse
+        working-directory: dbt
+        run: |
+          dbt parse --profiles-dir ci_profiles --vars '{gold_schema: x, genie_schema: y}'
+        env: {DBT_WAREHOUSE_ID: x, DBT_CATALOG: x, DBT_GOLD_SCHEMA: x, DBT_AUTH: oauth_m2m}
+
+  test:
+    needs: validate
+    runs-on: ubuntu-latest
+    environment: test
+    env:
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+      DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: databricks/setup-cli@main
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements-ci.txt
+      - name: Build data objects (dbt) before the agent deploys
+        run: python scripts/run_dbt.py --target test
+      - name: Deploy agent to test
+        run: |
+          python scripts/prebuild.py --target test
+          python scripts/prebuild.py --verify test
+          databricks bundle deploy -t test
+      - name: Check example and benchmark SQL
+        run: python scripts/check_agent_sql.py --target test
+      - name: Benchmark gate
+        run: python scripts/benchmark_gate.py --target test --min-accuracy 0.9 --critical-file benchmarks/critical.txt

@@ -1,0 +1,488 @@
+{
+  "benchmarks": {
+    "questions": [
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT MEASURE(`Funds Under Administration`) AS fua FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics WHERE `Month End` = (SELECT MAX(`Month End`) FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics)"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000001",
+        "question": [
+          "What is total FUA at the latest month end?"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT MEASURE(`Funds Under Administration`) AS fua FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics WHERE `Month End` = (SELECT MAX(`Month End`) FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics)"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000002",
+        "question": [
+          "How much money is on the platform right now?"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT MEASURE(`Funds Under Administration`) AS fua FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics WHERE `Month End` = DATE'2026-06-30'"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000003",
+        "question": [
+          "What was FUA at 30 June 2026?"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT `Account Type`, MEASURE(`Funds Under Administration`) AS fua FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics WHERE `Month End` = (SELECT MAX(`Month End`) FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics) GROUP BY `Account Type` ORDER BY fua DESC"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000004",
+        "question": [
+          "FUA by account type at the latest month end"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT State, MEASURE(`Funds Under Administration`) AS fua FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics WHERE `Month End` = (SELECT MAX(`Month End`) FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics) GROUP BY State ORDER BY fua DESC LIMIT 1"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000005",
+        "question": [
+          "Which state has the highest FUA this month?"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT Product, MEASURE(`Funds Under Administration`) AS fua FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics WHERE `Month End` = (SELECT MAX(`Month End`) FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics) AND `Account Type` = 'SMSF' GROUP BY Product ORDER BY fua DESC"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000006",
+        "question": [
+          "What is SMSF FUA by product at the latest month end?"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT `Month End`, MEASURE(`Funds Under Administration`) AS fua FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics WHERE Product = 'Platform Super' GROUP BY `Month End` ORDER BY `Month End`"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000007",
+        "question": [
+          "How has Platform Super FUA moved month by month?"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT MEASURE(`Account Count`) AS accounts FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics WHERE `Month End` = (SELECT MAX(`Month End`) FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics)"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000008",
+        "question": [
+          "How many accounts hold assets at the latest month end?"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT Product, MEASURE(`Average Account Balance`) AS avg_balance FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics WHERE `Month End` = (SELECT MAX(`Month End`) FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics) GROUP BY Product ORDER BY avg_balance DESC"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000009",
+        "question": [
+          "What is the average account balance by product right now?"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT MEASURE(`Funds Under Administration`) AS fua FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics WHERE `Month End` = (SELECT MAX(`Month End`) FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics) AND `Asset Class` = 'International Equities'"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000010",
+        "question": [
+          "How much FUA is held in International Equities this month?"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT Security, MEASURE(`Funds Under Administration`) AS fua FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics WHERE `Month End` = (SELECT MAX(`Month End`) FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics) GROUP BY Security ORDER BY fua DESC LIMIT 5"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000011",
+        "question": [
+          "Top 5 securities by FUA at the latest month end"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT MEASURE(`Net Flows`) AS net_flows FROM ${catalog}.${genie_schema}.account_flows_metrics WHERE `Transaction Date` BETWEEN DATE'2025-07-01' AND DATE'2026-06-30'"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000012",
+        "question": [
+          "What were net flows in FY2026?"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT Product, MEASURE(`Net Flows`) AS net_flows FROM ${catalog}.${genie_schema}.account_flows_metrics WHERE `Transaction Date` BETWEEN DATE'2025-07-01' AND DATE'2026-06-30' GROUP BY Product ORDER BY net_flows DESC"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000013",
+        "question": [
+          "Net flows by product for FY2026"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT `Transaction Month`, MEASURE(`Net Flows`) AS net_flows FROM ${catalog}.${genie_schema}.account_flows_metrics WHERE `Transaction Month` > ADD_MONTHS((SELECT MAX(`Transaction Month`) FROM ${catalog}.${genie_schema}.account_flows_metrics), -12) GROUP BY `Transaction Month` ORDER BY `Transaction Month`"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000014",
+        "question": [
+          "Monthly net flows for the last 12 months"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT `Account Type`, MEASURE(`Gross Inflows`) AS inflows, MEASURE(`Gross Outflows`) AS outflows FROM ${catalog}.${genie_schema}.account_flows_metrics WHERE `Transaction Date` BETWEEN DATE'2025-07-01' AND DATE'2026-06-30' GROUP BY `Account Type` ORDER BY `Account Type`"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000015",
+        "question": [
+          "What were gross inflows and outflows by account type in FY2026?"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT MEASURE(`Transaction Count`) AS withdrawals FROM ${catalog}.${genie_schema}.account_flows_metrics WHERE `Flow Type` = 'Withdrawal' AND `Transaction Date` BETWEEN DATE'2025-07-01' AND DATE'2026-06-30'"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000016",
+        "question": [
+          "How many withdrawals were there in FY2026?"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT State, MEASURE(`Net Flows`) AS net_flows FROM ${catalog}.${genie_schema}.account_flows_metrics WHERE `Transaction Date` BETWEEN DATE'2025-07-01' AND DATE'2026-06-30' GROUP BY State ORDER BY net_flows ASC LIMIT 1"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000017",
+        "question": [
+          "Which state had the weakest net flows in FY2026?"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT MEASURE(`Fee Revenue`) AS fee_revenue FROM ${catalog}.${genie_schema}.fee_revenue_metrics WHERE `Month End` BETWEEN DATE'2025-07-01' AND DATE'2026-06-30'"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000018",
+        "question": [
+          "What was total fee revenue in FY2026?"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT `Month End`, MEASURE(`Fee Revenue`) AS fee_revenue FROM ${catalog}.${genie_schema}.fee_revenue_metrics WHERE `Fee Type` = 'Administration' GROUP BY `Month End` ORDER BY `Month End`"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000019",
+        "question": [
+          "Administration fee revenue by month"
+        ]
+      },
+      {
+        "answer": [
+          {
+            "content": [
+              "SELECT `Account Type`, MEASURE(`Fee Revenue`) AS fee_revenue FROM ${catalog}.${genie_schema}.fee_revenue_metrics WHERE `Month End` BETWEEN DATE'2025-07-01' AND DATE'2026-06-30' GROUP BY `Account Type` ORDER BY fee_revenue DESC"
+            ],
+            "format": "SQL"
+          }
+        ],
+        "id": "40000000000000000000000000000020",
+        "question": [
+          "Fee revenue by account type for FY2026"
+        ]
+      }
+    ]
+  },
+  "config": {
+    "sample_questions": [
+      {
+        "id": "10000000000000000000000000000001",
+        "question": [
+          "What is FUA by product at the latest month end?"
+        ]
+      },
+      {
+        "id": "10000000000000000000000000000002",
+        "question": [
+          "What were net flows in FY2026?"
+        ]
+      },
+      {
+        "id": "10000000000000000000000000000003",
+        "question": [
+          "Show the monthly FUA trend for SMSF accounts"
+        ]
+      },
+      {
+        "id": "10000000000000000000000000000004",
+        "question": [
+          "Fee revenue by product for FY2026"
+        ]
+      }
+    ]
+  },
+  "data_sources": {
+    "tables": [
+      {
+        "column_configs": [
+          {
+            "column_name": "Account Type",
+            "enable_entity_matching": true,
+            "enable_format_assistance": true
+          },
+          {
+            "column_name": "Flow Type",
+            "enable_entity_matching": true,
+            "enable_format_assistance": true,
+            "synonyms": [
+              "transaction type"
+            ]
+          },
+          {
+            "column_name": "Product",
+            "enable_entity_matching": true,
+            "enable_format_assistance": true
+          },
+          {
+            "column_name": "State",
+            "enable_entity_matching": true,
+            "enable_format_assistance": true
+          }
+        ],
+        "identifier": "${catalog}.${genie_schema}.account_flows_metrics"
+      },
+      {
+        "column_configs": [
+          {
+            "column_name": "Account Type",
+            "enable_entity_matching": true,
+            "enable_format_assistance": true
+          },
+          {
+            "column_name": "Fee Type",
+            "enable_entity_matching": true,
+            "enable_format_assistance": true
+          },
+          {
+            "column_name": "Product",
+            "enable_entity_matching": true,
+            "enable_format_assistance": true
+          }
+        ],
+        "identifier": "${catalog}.${genie_schema}.fee_revenue_metrics"
+      },
+      {
+        "column_configs": [
+          {
+            "column_name": "Account Type",
+            "enable_entity_matching": true,
+            "enable_format_assistance": true,
+            "synonyms": [
+              "account structure"
+            ]
+          },
+          {
+            "column_name": "Asset Class",
+            "enable_entity_matching": true,
+            "enable_format_assistance": true,
+            "synonyms": [
+              "investment type"
+            ]
+          },
+          {
+            "column_name": "Product",
+            "enable_entity_matching": true,
+            "enable_format_assistance": true
+          },
+          {
+            "column_name": "Security",
+            "enable_entity_matching": true,
+            "enable_format_assistance": true
+          },
+          {
+            "column_name": "State",
+            "enable_entity_matching": true,
+            "enable_format_assistance": true
+          }
+        ],
+        "identifier": "${catalog}.${genie_schema}.portfolio_holdings_metrics"
+      }
+    ]
+  },
+  "instructions": {
+    "example_question_sqls": [
+      {
+        "id": "20000000000000000000000000000001",
+        "question": [
+          "What is FUA by product at the latest month end?"
+        ],
+        "sql": [
+          "SELECT Product, MEASURE(`Funds Under Administration`) AS fua\n",
+          "FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics\n",
+          "WHERE `Month End` = (SELECT MAX(`Month End`) FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics)\n",
+          "GROUP BY Product\n",
+          "ORDER BY fua DESC"
+        ]
+      },
+      {
+        "id": "20000000000000000000000000000002",
+        "question": [
+          "Show the monthly FUA trend"
+        ],
+        "sql": [
+          "SELECT `Month End`, MEASURE(`Funds Under Administration`) AS fua\n",
+          "FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics\n",
+          "GROUP BY `Month End`\n",
+          "ORDER BY `Month End`"
+        ]
+      },
+      {
+        "id": "20000000000000000000000000000003",
+        "question": [
+          "What were net flows by financial year?"
+        ],
+        "sql": [
+          "SELECT YEAR(ADD_MONTHS(`Transaction Date`, 6)) AS financial_year,\n",
+          "       MEASURE(`Net Flows`) AS net_flows\n",
+          "FROM ${catalog}.${genie_schema}.account_flows_metrics\n",
+          "GROUP BY YEAR(ADD_MONTHS(`Transaction Date`, 6))\n",
+          "ORDER BY financial_year"
+        ]
+      },
+      {
+        "id": "20000000000000000000000000000004",
+        "question": [
+          "What share of FUA is in each asset class right now?"
+        ],
+        "sql": [
+          "SELECT `Asset Class`,\n",
+          "       MEASURE(`Funds Under Administration`) AS fua,\n",
+          "       ROUND(100 * MEASURE(`Funds Under Administration`) / SUM(MEASURE(`Funds Under Administration`)) OVER (), 1) AS pct_of_fua\n",
+          "FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics\n",
+          "WHERE `Month End` = (SELECT MAX(`Month End`) FROM ${catalog}.${genie_schema}.portfolio_holdings_metrics)\n",
+          "GROUP BY `Asset Class`\n",
+          "ORDER BY fua DESC"
+        ]
+      },
+      {
+        "id": "20000000000000000000000000000005",
+        "question": [
+          "Fee revenue by product and fee type for FY2026"
+        ],
+        "sql": [
+          "SELECT Product, `Fee Type`, MEASURE(`Fee Revenue`) AS fee_revenue\n",
+          "FROM ${catalog}.${genie_schema}.fee_revenue_metrics\n",
+          "WHERE `Month End` BETWEEN DATE'2025-07-01' AND DATE'2026-06-30'\n",
+          "GROUP BY Product, `Fee Type`\n",
+          "ORDER BY Product, `Fee Type`"
+        ]
+      }
+    ],
+    "text_instructions": [
+      {
+        "content": [
+          "This agent answers portfolio reporting questions for the platform: funds under administration (FUA), flows and fee revenue by product, account type, state and asset class. Amounts are in AUD.\n",
+          "Always query measures with MEASURE(), for example MEASURE(`Funds Under Administration`). Never select raw measure columns.\n",
+          "FUA, account count and average balance are month-end balances. If the user gives no date, use the latest Month End. Never add FUA across months; for trends, group by `Month End`.\n",
+          "Flows and fee revenue are additive over time and can be summed across months.\n",
+          "Financial years run 1 July to 30 June and are named by the year they end in: FY2026 is 1 July 2025 to 30 June 2026. Derive the financial year as YEAR(ADD_MONTHS(date, 6)).\n",
+          "Closed accounts are included in history. Filter on `Account Status` only when the user asks for open or closed accounts.\n",
+          "Present money in whole dollars, or in millions with one decimal place (for example $12.3M) for totals above $1M.\n",
+          "Relative periods such as 'last 12 months', 'this month' or 'this year' are relative to the latest month in the data, not today's date. Anchor them on MAX(`Month End`) or MAX(`Transaction Month`) from the metric view being queried."
+        ],
+        "id": "30000000000000000000000000000001"
+      }
+    ]
+  },
+  "version": 2
+}

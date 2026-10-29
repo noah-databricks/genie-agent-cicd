@@ -1,0 +1,33 @@
+# Release to prod. Runs on a version tag. The `production` environment only accepts v* tags;
+# on GitHub Team/Enterprise add the agent owner as a required reviewer so each release waits
+# for approval. Roll back by running this workflow on the previous tag.
+name: genie-agent-release
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:   # choose an existing tag as the ref to roll back
+
+concurrency: genie-prod
+
+jobs:
+  prod:
+    runs-on: ubuntu-latest
+    environment: production
+    env:
+      DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
+      DATABRICKS_CLIENT_ID: ${{ secrets.DATABRICKS_CLIENT_ID }}
+      DATABRICKS_CLIENT_SECRET: ${{ secrets.DATABRICKS_CLIENT_SECRET }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: databricks/setup-cli@main
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: pip install -r requirements-ci.txt
+      - run: python scripts/run_dbt.py --target prod
+      - name: Deploy agent to prod
+        run: |
+          python scripts/prebuild.py --target prod
+          python scripts/prebuild.py --verify prod
+          databricks bundle deploy -t prod
+      - run: python scripts/check_agent_sql.py --target prod

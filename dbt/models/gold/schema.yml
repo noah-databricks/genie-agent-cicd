@@ -1,0 +1,36 @@
+version: 2
+# Descriptions are written to Unity Catalog comments by persist_docs, so Genie reads them as context.
+models:
+  - name: dim_account
+    description: One row per platform account.
+    columns:
+      - name: account_id
+        description: Platform account identifier (A + 6 digits).
+        data_tests: [unique, not_null]
+      - name: account_type
+        description: Legal structure of the account (Individual, Joint, SMSF, Trust, Company, Super, Pension).
+      - name: product
+        description: Platform product the account is held on.
+      - name: state
+        description: Australian state or territory of the primary account holder.
+      - name: open_date
+        description: Date the account was opened.
+      - name: status
+        description: Open or Closed.
+  - name: dim_security
+    description: Security master for investable assets on the platform.
+    columns:
+      - name: security_code
+        description: Platform security code.
+        data_tests: [unique, not_null]
+      - name: asset_class
+        description: Asset class used in portfolio reporting.
+  - name: fct_holdings_monthly
+    description: Month-end holdings per account and security. Market value is units x unit price in AUD.
+    columns:
+      - name: market_value
+        description: Month-end market value in AUD.
+  - name: fct_cash_flows
+    description: Contributions, withdrawals and transfers. signed_amount is positive for inflows and negative for outflows.
+  - name: fct_fees
+    description: Monthly administration and investment fees charged per account, in AUD.

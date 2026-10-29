@@ -1,0 +1,64 @@
+# Portfolio Reporting Genie agent: data objects (dbt) and the agent itself, deployed as one bundle.
+# Pattern: develop in dev, PR + CI, benchmark gate in test, promote to prod by changing target.
+bundle:
+  name: portfolio_reporting_genie
+  engine: direct  # genie_spaces need the direct deployment engine
+
+sync:
+  include:
+    - build/**   # build/ is gitignored but must be uploaded
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog catalog for this environment.
+  gold_schema:
+    description: Schema for gold tables built by dbt.
+  genie_schema:
+    description: The agent's own schema (curated views + metric views only). One agent, one schema.
+  warehouse_id:
+    description: SQL warehouse for dbt and for the Genie agent.
+    lookup:
+      warehouse: Serverless Starter Warehouse
+  agent_title:
+    description: Agent title shown in Genie and Genie One.
+    default: Portfolio Reporting
+  agent_users_group:
+    description: Group granted CAN_RUN on the agent and SELECT on the agent schema.
+    default: account users  # replace with the IdP-synced account group for this agent's users
+
+targets:
+  dev:
+    mode: development   # prefixes resource names with [dev <user>] and pauses schedules
+    default: true
+    workspace:
+      host: https://<dev-workspace-host>
+    variables:
+      catalog: analytics_dev
+      gold_schema: ${workspace.current_user.short_name}_portfolio_gold
+      genie_schema: ${workspace.current_user.short_name}_portfolio_genie
+
+  test:
+    # Shared test environment where CI runs the benchmark gate.
+    workspace:
+      host: https://<test-workspace-host>
+    variables:
+      catalog: analytics_tst
+      gold_schema: portfolio_gold
+      genie_schema: portfolio_genie
+      agent_title: Portfolio Reporting (test)
+
+  prod:
+    mode: production
+    workspace:
+      host: https://<prod-workspace-host>
+      # Under the deploying identity's home (the deployment service principal in CI), not /Workspace/Shared
+      root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+    # CI deploys test and prod as the deployment service principal (see docs/deployment_principal.md),
+    # so the agent's author is that principal, not a person or the platform Terraform principal.
+    variables:
+      catalog: analytics_prd
+      gold_schema: portfolio_gold
+      genie_schema: portfolio_genie
